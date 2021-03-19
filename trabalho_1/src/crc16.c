@@ -55,7 +55,7 @@ short calcula_CRC(unsigned char *commands, int size) {
 	return crc;
 }
 
-void checa_CRC(unsigned char *buffer, int size)
+int checa_CRC(unsigned char *buffer, int size)
 {
     short crc_rx_calculado = calcula_CRC(buffer, (size - 2));
     short crc_rx_recebido;
@@ -63,8 +63,10 @@ void checa_CRC(unsigned char *buffer, int size)
     if(crc_rx_calculado - crc_rx_recebido == 0)
     {
         printf("CRC recebido confere com o calculado!\n");
+        return 1;
     } else
     {
         printf("CRC recebido e calculado diferentes!\n");
+        return 0;
     }
 }

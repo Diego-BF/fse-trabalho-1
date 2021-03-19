@@ -1,17 +1,28 @@
 #include <stdio.h>
 
-#include "../inc/solicita_dados.h"
-#include "../inc/envia_dados.h"
 #include "../inc/definicoes_gerais.h"
-#include "../inc/comunicacao_i2c_bme280.h"
+#include "../inc/solicita_dados_uart.h"
 #include "../inc/comunicacao_i2c_lcd.h"
+#include "../inc/comunicacao_i2c_bme280.h"
 
 
 int main(int argc, const char * argv[])
 {
-    // int uart0_filestream = -1;
-    // inicia_bme280();
-    testa_lcd();
+    float temperatura_interna = 0.0;
+    float temperatura_externa = 0.0;
+    float temperatura_ref =     0.0;
+    float temperatura_potenc =  0.0;
+
+    /* a qualquer momento permitir que o usuario escolha entre colocar uma
+    temperatura de referencia ou usar a do potenciometro */
+    // obtem temperatura interna
+    // obtem temperatura potenciometro
+    // obtem temperatura externa
+    // obtem temperatura de referencia
+    // escrever no arquivo csv os dados medidos
+    // calcula pid
+    // PID > 0 -> usa a PWN para acionar/controlar o resistor
+    // PID <= -40 -> usa a PWN para acionar/controlar a ventoinha
 
     // const int NUM_ESCOLHAS = 2;
     // int escolha = -1;

@@ -41,35 +41,22 @@
 
 #define ENABLE  0b00000100 // Enable bit
 
-#define TIME_2000MSEC 2000000000L
-#define TIME_500MICSEC 5L
-
-
 int testa_lcd(void);
 void lcd_init(void);
 void lcd_byte(int bits, int mode);
 void lcd_toggle_enable(int bits);
 
 // added by Lewis
-void type_int(int num);
+int exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref);
 void type_float(float num);
 void lcd_loc(int line); //move cursor
 void clr_lcd(void); // clr LCD return home
 void type_ln(const char *s);
 void type_char(char val);
 
-void espera_nsecs(long nanosecs);
-
-// // added by Lewis
-// void typeInt(int i);
-// void typeFloat(float myFloat);
-// void lcd_loc(int line); //move cursor
-// void clr_lcd(void); // clr LCD return home
-// void type_ln(const char *s);
-// void typeChar(char val);
 int fd;  // seen by all subroutines
 
-int testa_lcd(void)
+int exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref)
 {
     // if (wiringPiSetupSys() == -1)
     // {
@@ -83,51 +70,51 @@ int testa_lcd(void)
         exit (1);
     }
 
-  //printf("fd = %d ", fd);
+    //printf("fd = %d ", fd);
 
-  lcd_init(); // setup LCD
+    lcd_init(); // setup LCD
 
-    char array1[] = "Hello world!";
+    // char array1[] = "Hello world!";
 
     // while (1)
     // {
-        lcd_loc(LINE1);
-        type_ln("Using wiringPi");
-        lcd_loc(LINE2);
-        type_ln("Geany editor.");
+    // lcd_loc(LINE1);
+    // type_ln("Using wiringPi");
+    // lcd_loc(LINE2);
+    // type_ln("Geany editor.");
 
-        espera_nsecs(TIME_2000MSEC);
-        clr_lcd();
-        lcd_loc(LINE1);
-        type_ln("I2c  Programmed");
-        lcd_loc(LINE2);
-        type_ln("in C not Python.");
+    // espera_nsecs(TIME_2000MSEC);
+    // clr_lcd();
+    // lcd_loc(LINE1);
+    // type_ln("I2c  Programmed");
+    // lcd_loc(LINE2);
+    // type_ln("in C not Python.");
 
-        espera_nsecs(TIME_2000MSEC);
-        clr_lcd();
-        lcd_loc(LINE1);
-        type_ln("Arduino like");
-        lcd_loc(LINE2);
-        type_ln("fast and easy.");
+    // espera_nsecs(TIME_2000MSEC);
+    // clr_lcd();
+    // lcd_loc(LINE1);
+    // type_ln("Arduino like");
+    // lcd_loc(LINE2);
+    // type_ln("fast and easy.");
 
-        espera_nsecs(TIME_2000MSEC);
-        clr_lcd();
-        lcd_loc(LINE1);
-        type_ln(array1);
+    // espera_nsecs(TIME_2000MSEC);
+    // clr_lcd();
+    // lcd_loc(LINE1);
+    // type_ln(array1);
 
-        espera_nsecs(TIME_2000MSEC);
-        clr_lcd(); // defaults LINE1
-        type_ln("Int  ");
-        int value = 20125;
-        type_int(value);
+    espera_nsecs(TEMPO_50MS);
+    clr_lcd(); // defaults LINE1
+    type_ln("TI:");
+    type_float(temp_interna);
+    type_ln(" TR:");
+    type_float(temp_ref);
 
-        espera_nsecs(TIME_2000MSEC);
-        lcd_loc(LINE2);
-        type_ln("Float ");
-        float FloatVal = 10045.25989;
-        type_float(FloatVal);
-        espera_nsecs(TIME_2000MSEC);
-    // }
+    espera_nsecs(TEMPO_50MS);
+    lcd_loc(LINE2);
+    type_ln("TE:");
+    type_float(temp_externa);
+    espera_nsecs(TEMPO_50MS);
+// }
 
     return 0;
 }
@@ -137,7 +124,7 @@ int testa_lcd(void)
 void type_float(float num)
 {
     char buffer[20];
-    sprintf(buffer, "%4.2f", num);
+    sprintf(buffer, "%2.2f", num);
     type_ln(buffer);
 }
 
@@ -198,11 +185,11 @@ void lcd_byte(int bits, int mode)
 
     void lcd_toggle_enable(int bits)   {
     // Toggle enable pin on LCD display
-    espera_nsecs(TIME_500MICSEC);
+    espera_nsecs(TEMPO_500US);
     wiringPiI2CReadReg8(fd, (bits | ENABLE));
-    espera_nsecs(TIME_500MICSEC);
+    espera_nsecs(TEMPO_500US);
     wiringPiI2CReadReg8(fd, (bits & ~ENABLE));
-    espera_nsecs(TIME_500MICSEC);
+    espera_nsecs(TEMPO_500US);
 }
 
 void lcd_init(void)
@@ -214,5 +201,5 @@ void lcd_init(void)
     lcd_byte(0x0C, LCD_CMD); // 0x0F On, Blink Off
     lcd_byte(0x28, LCD_CMD); // Data length, number of lines, font size
     lcd_byte(0x01, LCD_CMD); // Clear display
-    espera_nsecs(TIME_500MICSEC);
+    espera_nsecs(TEMPO_500US);
 }
