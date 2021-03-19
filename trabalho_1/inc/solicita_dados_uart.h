@@ -1,5 +1,5 @@
-#ifndef SOLICITA_DADOS_H_
-#define SOLICITA_DADOS_H_
+#ifndef SOLICITA_DADOS_UART_H_
+#define SOLICITA_DADOS_UART_H_
 
 void solicita_int(int *uart_filestream);
 

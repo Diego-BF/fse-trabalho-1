@@ -10,6 +10,6 @@
 
 short CRC16(short crc, char data);
 short calcula_CRC(unsigned char *commands, int size);
-void checa_CRC(unsigned char *buffer, int size);
+int checa_CRC(unsigned char *buffer, int size);
 
 #endif /* CRC16_H_ */
