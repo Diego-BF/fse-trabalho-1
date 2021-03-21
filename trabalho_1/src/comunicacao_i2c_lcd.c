@@ -20,14 +20,11 @@
 */
 
 #include <wiringPiI2C.h>
-// #include <wiringPi.h>
+#include <wiringPi.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include "../inc/utils.h"
-
-// Define some device parameters
-#define I2C_ADDR_LCD   0x27 // I2C device address
 
 // Define some device constants
 #define LCD_CHR  1 // Mode - Sending data
@@ -41,82 +38,30 @@
 
 #define ENABLE  0b00000100 // Enable bit
 
-int testa_lcd(void);
-void lcd_init(void);
+void exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref);
+void lcd_init(int *fd_ref);
 void lcd_byte(int bits, int mode);
 void lcd_toggle_enable(int bits);
 
 // added by Lewis
-int exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref);
 void type_float(float num);
 void lcd_loc(int line); //move cursor
 void clr_lcd(void); // clr LCD return home
 void type_ln(const char *s);
 void type_char(char val);
 
-int fd;  // seen by all subroutines
+int *fd;  // seen by all subroutines
 
-int exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref)
+void exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref)
 {
-    // if (wiringPiSetupSys() == -1)
-    // {
-    //     exit (1);
-    // }
-
-    fd = wiringPiI2CSetup(I2C_ADDR_LCD);
-
-    if (fd == -1)
-    {
-        exit (1);
-    }
-
-    //printf("fd = %d ", fd);
-
-    lcd_init(); // setup LCD
-
-    // char array1[] = "Hello world!";
-
-    // while (1)
-    // {
-    // lcd_loc(LINE1);
-    // type_ln("Using wiringPi");
-    // lcd_loc(LINE2);
-    // type_ln("Geany editor.");
-
-    // espera_nsecs(TIME_2000MSEC);
-    // clr_lcd();
-    // lcd_loc(LINE1);
-    // type_ln("I2c  Programmed");
-    // lcd_loc(LINE2);
-    // type_ln("in C not Python.");
-
-    // espera_nsecs(TIME_2000MSEC);
-    // clr_lcd();
-    // lcd_loc(LINE1);
-    // type_ln("Arduino like");
-    // lcd_loc(LINE2);
-    // type_ln("fast and easy.");
-
-    // espera_nsecs(TIME_2000MSEC);
-    // clr_lcd();
-    // lcd_loc(LINE1);
-    // type_ln(array1);
-
-    espera_nsecs(TEMPO_50MS);
     clr_lcd(); // defaults LINE1
+    type_ln("TR:");
+    type_float(temp_ref);
+    lcd_loc(LINE2);
     type_ln("TI:");
     type_float(temp_interna);
-    type_ln(" TR:");
-    type_float(temp_ref);
-
-    espera_nsecs(TEMPO_50MS);
-    lcd_loc(LINE2);
-    type_ln("TE:");
+    type_ln(" TE:");
     type_float(temp_externa);
-    espera_nsecs(TEMPO_50MS);
-// }
-
-    return 0;
 }
 
 
@@ -124,7 +69,7 @@ int exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref)
 void type_float(float num)
 {
     char buffer[20];
-    sprintf(buffer, "%2.2f", num);
+    sprintf(buffer, "%2.1f", num);
     type_ln(buffer);
 }
 
@@ -175,25 +120,26 @@ void lcd_byte(int bits, int mode)
     bits_low = mode | ((bits << 4) & 0xF0) | LCD_BACKLIGHT ;
 
     // High bits
-    wiringPiI2CReadReg8(fd, bits_high);
+    wiringPiI2CReadReg8(*fd, bits_high);
     lcd_toggle_enable(bits_high);
 
     // Low bits
-    wiringPiI2CReadReg8(fd, bits_low);
+    wiringPiI2CReadReg8(*fd, bits_low);
     lcd_toggle_enable(bits_low);
     }
 
     void lcd_toggle_enable(int bits)   {
     // Toggle enable pin on LCD display
     espera_nsecs(TEMPO_500US);
-    wiringPiI2CReadReg8(fd, (bits | ENABLE));
+    wiringPiI2CReadReg8(*fd, (bits | ENABLE));
     espera_nsecs(TEMPO_500US);
-    wiringPiI2CReadReg8(fd, (bits & ~ENABLE));
+    wiringPiI2CReadReg8(*fd, (bits & ~ENABLE));
     espera_nsecs(TEMPO_500US);
 }
 
-void lcd_init(void)
+void lcd_init(int *fd_ref)
 {
+    fd = fd_ref;
     // Initialise display
     lcd_byte(0x33, LCD_CMD); // Initialise
     lcd_byte(0x32, LCD_CMD); // Initialise
