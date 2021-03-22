@@ -42,8 +42,6 @@ void exibe_dado_lcd(float temp_interna, float temp_externa, float temp_ref);
 void lcd_init(int *fd_ref);
 void lcd_byte(int bits, int mode);
 void lcd_toggle_enable(int bits);
-
-// added by Lewis
 void type_float(float num);
 void lcd_loc(int line); //move cursor
 void clr_lcd(void); // clr LCD return home

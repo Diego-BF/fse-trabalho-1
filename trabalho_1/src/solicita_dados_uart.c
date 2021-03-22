@@ -21,10 +21,10 @@ float solicita_float(short sub_cod)
     *p_tx_buffer++ = COD_ARDUINO;
     *p_tx_buffer++ = COD_CMD_SOLICITA;
     *p_tx_buffer++ = sub_cod;
-    *p_tx_buffer++ = 0;
-    *p_tx_buffer++ = 7;
-    *p_tx_buffer++ = 8;
-    *p_tx_buffer++ = 9;
+    *p_tx_buffer++ = 6;
+    *p_tx_buffer++ = 3;
+    *p_tx_buffer++ = 5;
+    *p_tx_buffer++ = 5;
 
     bytesShort crc_tx_calculado;
     crc_tx_calculado.valor_short = calcula_CRC(tx_buffer, 7);
